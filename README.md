@@ -12,4 +12,5 @@ enough -, maybe I could try to create my own protocols.
 Mostly for fun/curiosity/coding practice
 
 ## Journal/Misc
-- 2025/08/18 - Created the repo
+### 2025/08/18
+Created the repo
