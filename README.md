@@ -29,3 +29,6 @@ first.
 Created the repo
 ### 2025/10/04
 Started to think a bit about some approaches I could take on here.
+\
+Update : found out some projects with a similar premise already exist. Doesn't change much though,
+this was mostly meant as project for personal learning and exploration.
