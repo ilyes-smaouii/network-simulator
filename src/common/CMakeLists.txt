@@ -8,9 +8,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Put executables in bin/
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-set(CPP_COMMON_SRC_DIR ../lib/cpp-common)
+set(CPP_COMMON_SRC_DIR ../../lib/cpp-common)
 
 # --- Library: cpp_common ---
 file(GLOB CPP_COMMON_SOURCES

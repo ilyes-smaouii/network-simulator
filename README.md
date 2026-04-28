@@ -18,6 +18,8 @@ Mostly for fun/curiosity/coding practice
   - If a layer N module can work without depending on lower layers, this allows 
 me to, say, start working on UDP without having to work on Ethernet/MAC/other
 first.
+- Layers obviously make assumptions on lower/other layers. So can protocols !
+- Allow for debugging/research/introspection functionality. e.g. allow for artificial latency
 
 ## Ideas/things to explore
 - Impact of physical medium/other layers on applications
@@ -35,3 +37,16 @@ this was mostly meant as project for personal learning and exploration.
 
 ### 2026/04/20
 Starting up again
+
+### 2026/04/24
+Some ideas for use cases :
+- \[L1-L7\] device communicating with another \[L1-L7\] device, with several [L3] devices in-between. Simple HTTP exchange should be enough.
+  - Allows to test for everything, and particulary L3
+  - Config files for L3 network topology ?
+- Same or similar, but with at least one \[L1-L3\] pair somewhere in the middle, to experiment with changing network conditions (intereferences, etc.)
+- Same or similar, but with at least one \[L1-L3\] pair somewhere in the middle, to experiment with man-in-the-middle attacks ?
+- ?
+
+### 2026/04/28
+Still in early drafting staged, but it's starting to have some structure.
+Added generic layer entities, MAC and IP addresses - well at least basic functionalities -, and some other stuff I guess.
