@@ -11,7 +11,7 @@ using layer_t = std::uint8_t;
 enum class OsiLayer : layer_t {
   UNDEF_IDX = 0,
   PHYSICAL_IDX = 1,
-  DATA_LINK_IDX = 2,
+  DATALINK_IDX = 2,
   NETWORK_IDX = 3,
   TRANSPORT_IDX = 4,
   SESSION_IDX = 5,
@@ -31,7 +31,7 @@ constexpr std::string_view osi_layer_to_sv(OsiLayer layer) {
   switch (static_cast<OsiLayer>(layer)) {
   case OsiLayer::PHYSICAL_IDX:
     return PHYSICAL_LAYER_SV;
-  case OsiLayer::DATA_LINK_IDX:
+  case OsiLayer::DATALINK_IDX:
     return DATA_LINK_LAYER_SV;
   case OsiLayer::NETWORK_IDX:
     return NETWORK_LAYER_SV;
@@ -52,8 +52,8 @@ constexpr std::string_view osi_layer_to_sv(OsiLayer layer) {
 template <typename AddressType>
 concept IsAddressType =
     true && requires(AddressType const &a, AddressType const &b) {
-      { a == b } -> std::convertible_to<bool>;
-      { a != b } -> std::convertible_to<bool>;
+      { a == b } -> std::convertible_to<const bool>;
+      { a != b } -> std::convertible_to<const bool>;
     };
 
 template <typename T>
@@ -65,7 +65,9 @@ concept IsAddressableEntity =
       } -> std::convertible_to<const typename T::address_t>;
     };
 
-template <typename LayerType>
-concept IsLayerType = true;
+// template <typename LayerType>
+// concept IsLayerType = requires(LayerType const &layer) {
+//   { LayerType::LAYER_IDX } -> std::convertible_to<OsiLayer const &>;
+// };
 
 } // namespace common_ns

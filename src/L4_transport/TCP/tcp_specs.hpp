@@ -1,20 +1,30 @@
+#pragma once
+
+#include "../../common/common_net.hpp"
 #include "../../common/generic_layers.hpp"
+#include "../../common/misc.hpp"
 
 namespace cns = common_ns;
 
-class TCPEntity : public cns::GenericL4Entity {
+namespace ip_stack {
+
+class TCPEntity {
 public:
-  using GenericL4Entity::address_t;
-  using GenericL4Entity::LAYER_IDX;
+  using address_t = cns::PortAddress;
+  constexpr static cns::OsiLayer LAYER_IDX{cns::OsiLayer::TRANSPORT_IDX};
+  constexpr static std::size_t MAX_PACKET_SIZE{
+      65535}; // Maximum size of a TCP packet (including header and data)
 
-  TCPEntity();
+  TCPEntity() = default;
 
-  address_t const &getAddress() const override;
+  address_t const &getAddress() const;
 
 protected:
-  address_t _address{};
+  address_t m_address{};
 
 private:
 };
 
-static_assert(cns::IsAddressableEntity<TCPEntity>);
+static_assert(cns::IsL4EntityType<TCPEntity>);
+
+} // namespace ip_stack

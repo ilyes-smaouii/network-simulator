@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <cstring>
 #include <initializer_list>
 #include <stdexcept>
 #include <string>
@@ -85,7 +86,9 @@ IPv6Address::octet_t const &IPv6Address::at(std::size_t index) const {
 
 bool IPv6Address::isIPv4Mapped() const {
   // Check if the first 10 bytes are 0 and the next 2 bytes are 0xFF
-  return std::memcmp(_address.data(), "\x00\x00\x00\x00\x00\xFF\xFF", 12) == 0;
+  return std::memcmp(_address.data(),
+                     "\x00\x00\x00\x00\x00\x00\x00\x00\xFF\xFF\xFF\xFF",
+                     12) == 0;
 }
 
 IPv4Address IPv6Address::toIPv4() const {
@@ -110,5 +113,11 @@ std::string IPv6Address::toString() const {
   }
   return result;
 }
+
+PortAddress::PortAddress(PortAddress::underlying_address_t const &port_number)
+    : _port_number(port_number) {}
+
+PortAddress::PortAddress(PortAddress::underlying_address_t &&port_number)
+    : _port_number(std::move(port_number)) {}
 
 } // namespace common_ns

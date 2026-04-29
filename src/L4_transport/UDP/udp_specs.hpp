@@ -1,17 +1,25 @@
 #pragma once
 
-#include "../../common/common_net.hpp"
+#include "../../common/generic_layers.hpp"
+#include "../../common/misc.hpp"
 
 namespace cns = common_ns;
 
+namespace ip_stack {
+
 class UDPEntity {
 public:
-  using layer_t = cns::layer_t;
+  using address_t = cns::PortAddress;
+  constexpr static cns::OsiLayer LAYER_IDX{cns::OsiLayer::TRANSPORT_IDX};
 
   UDPEntity();
 
-  static constexpr cns::OsiLayer LAYER{cns::OsiLayer::TRANSPORT_IDX};
+  address_t const &getAddress() const;
 
 protected:
 private:
 };
+
+static_assert(cns::IsL4EntityType<UDPEntity>);
+
+} // namespace ip_stack
