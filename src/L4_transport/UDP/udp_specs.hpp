@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../common/generic_layers.hpp"
+#include "../../common/generic-layers.hpp"
 #include "../../common/misc.hpp"
 
 namespace cns = common_ns;
