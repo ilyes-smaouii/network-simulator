@@ -1,4 +1,5 @@
 #include <bit>
+#include <concepts>
 #include <cstdint>
 #include <cstring>
 #include <initializer_list>
@@ -11,7 +12,7 @@
 #include "common-net.hpp"
 #include "misc.hpp"
 
-namespace common_ns {
+namespace ip_stack {
 
 // IPv4SubnetMask
 
@@ -23,12 +24,19 @@ std::size_t IPv4SubnetMask::getLength() const { return std::popcount(m_mask); }
 
 // IPv4
 
-IPv4Address::IPv4Address(const std::array<cns::byte_t, OCTET_COUNT> &addr)
+IPv4Address::IPv4Address(IPv4Address::underlying_address_t const &addr)
     : m_address(addr) {}
 
-IPv4Address::IPv4Address(std::initializer_list<cns::byte_t> init) {
-  std::copy_n(init.begin(), std::min(init.size(), OCTET_COUNT),
-              m_address.begin());
+// IPv4Address::IPv4Address(std::initializer_list<octet_t> init) {
+//   std::copy_n(init.begin(), std::min(init.size(), OCTET_COUNT),
+//               m_address.begin());
+// }
+
+IPv4Address::IPv4Address(IPv4Address::octet_t const &a,
+                         IPv4Address::octet_t const &b,
+                         IPv4Address::octet_t const &c,
+                         IPv4Address::octet_t const &d) {
+  m_address = {a, b, c, d};
 }
 
 IPv4Address::octet_t *IPv4Address::data() { return m_address.data(); }
@@ -62,7 +70,7 @@ IPv6Address::IPv6Address(std::initializer_list<cns::byte_t> init) {
               m_address.begin());
 }
 
-IPv6Address::IPv6Address(const IPv4Address &ipv4_addr) {
+IPv6Address::IPv6Address(IPv4Address const &ipv4_addr) {
   // Map the IPv4 address to an IPv6 address using the IPv4-mapped IPv6 address
   // format
   m_address.at(0) = 0;
@@ -77,6 +85,33 @@ IPv6Address::IPv6Address(const IPv4Address &ipv4_addr) {
   m_address.at(9) = 0;
   m_address.at(10) = 0xFF; // FF in hexadecimal
   m_address.at(11) = 0xFF; // FF in hexadecimal
+  static_assert(std::convertible_to<decltype(ipv4_addr.data()),
+                                    const IPv4Address::octet_t *>,
+                "Error : expected IPv4Address::data() to yield pointer to "
+                "IPv4Address::octet_t !");
+  std::copy_n(ipv4_addr.data(), IPv4Address::OCTET_COUNT,
+              m_address.data() + 12);
+}
+
+IPv6Address::IPv6Address(IPv4Address &&ipv4_addr) {
+  // Map the IPv4 address to an IPv6 address using the IPv4-mapped IPv6 address
+  // format
+  m_address.at(0) = 0;
+  m_address.at(1) = 0;
+  m_address.at(2) = 0;
+  m_address.at(3) = 0;
+  m_address.at(4) = 0;
+  m_address.at(5) = 0;
+  m_address.at(6) = 0;
+  m_address.at(7) = 0;
+  m_address.at(8) = 0;
+  m_address.at(9) = 0;
+  m_address.at(10) = 0xFF; // FF in hexadecimal
+  m_address.at(11) = 0xFF; // FF in hexadecimal
+  static_assert(std::convertible_to<decltype(ipv4_addr.data()),
+                                    const IPv4Address::octet_t *>,
+                "Error : expected IPv4Address::data() to yield pointer to "
+                "IPv4Address::octet_t !");
   std::copy_n(ipv4_addr.data(), IPv4Address::OCTET_COUNT,
               m_address.data() + 12);
 }
@@ -132,4 +167,4 @@ PortAddress::PortAddress(PortAddress::underlying_address_t const &port_number)
 PortAddress::PortAddress(PortAddress::underlying_address_t &&port_number)
     : m_port_number(std::move(port_number)) {}
 
-} // namespace common_ns
+} // namespace ip_stack

@@ -10,7 +10,7 @@ namespace ip_stack {
 
 class MacEntity {
 public:
-  using address_t = cns::MacAddress;
+  using address_t = ip_stack::MacAddress;
   constexpr static cns::OsiLayer LAYER_IDX{cns::OsiLayer::DATALINK_IDX};
 
   MacEntity() = default;

@@ -4,6 +4,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <initializer_list>
 #include <string>
 
@@ -12,7 +13,7 @@
 
 namespace cns = common_ns;
 
-namespace common_ns {
+namespace ip_stack {
 
 // TO-DO : move everything here somewhere else; ideally, misc.hpp should be
 // empty (?)
@@ -51,7 +52,8 @@ public:
   IPv4SubnetMask() = default;
   IPv4SubnetMask(const IPv4SubnetMask &) = default;
   IPv4SubnetMask(IPv4SubnetMask &&) = default;
-  IPv4SubnetMask(const mask_t &network_address);
+  IPv4SubnetMask(const mask_t &mask_bin_rep);
+  // IPv4SubnetMask(const prefix_length_t &prefix_length);
   IPv4SubnetMask &operator=(const IPv4SubnetMask &) = default;
   IPv4SubnetMask &operator=(IPv4SubnetMask &&) = default;
 
@@ -85,7 +87,9 @@ public:
   IPv4Address(const IPv4Address &) = default;
   IPv4Address(IPv4Address &&) = default;
   IPv4Address(underlying_address_t const &addr);
-  IPv4Address(std::initializer_list<cns::byte_t> init);
+  // IPv4Address(std::initializer_list<octet_t> init);
+  IPv4Address(octet_t const &a, octet_t const &b, octet_t const &c,
+              octet_t const &d);
 
   IPv4Address &operator=(const IPv4Address &) = default;
   IPv4Address &operator=(IPv4Address &&) = default;
@@ -118,7 +122,8 @@ public:
   IPv6Address(IPv6Address &&) = default;
   IPv6Address(underlying_address_t const &addr);
   IPv6Address(std::initializer_list<cns::byte_t> init);
-  IPv6Address(const IPv4Address &ipv4_addr);
+  IPv6Address(IPv4Address const &ipv4_addr);
+  IPv6Address(IPv4Address &&ipv4_addr);
 
   IPv6Address &operator=(const IPv6Address &) = default;
   IPv6Address &operator=(IPv6Address &&) = default;
@@ -161,24 +166,31 @@ private:
 };
 
 static_assert(
-    IsAddressType<MacAddress>,
+    cns::IsAddressType<MacAddress>,
     "MacAddress does not satisfy IsAddressType concept requirements !");
 static_assert(
-    IsAddressType<IPv4Address>,
+    cns::IsAddressType<IPv4Address>,
     "IPv4Address does not satisfy IsAddressType concept requirements !");
 static_assert(
-    IsAddressType<PortAddress>,
+    cns::IsAddressType<PortAddress>,
     "PortAddress does not satisfy IsAddressType concept requirements !");
 
-} // namespace common_ns
+} // namespace ip_stack
 
 namespace std {
 
-template <> struct hash<cns::IPv6Address> {
-  std::size_t operator()(cns::IPv6Address const &address) const {
+template <> struct hash<ip_stack::IPv4Address> {
+  std::size_t operator()(ip_stack::IPv4Address const &address) const {
+    return std::hash<std::uint32_t>()(
+        *reinterpret_cast<const std::uint32_t *>(address.data()));
+  }
+};
+
+template <> struct hash<ip_stack::IPv6Address> {
+  std::size_t operator()(ip_stack::IPv6Address const &address) const {
     auto const data = reinterpret_cast<const std::uint64_t *>(address.data());
     return HLP::hashOnList<std::uint64_t>({data[0], data[1]});
-    // return HLP::hashOnList<cns::IPv6Address::octet_t>(
+    // return HLP::hashOnList<ip_stack::IPv6Address::octet_t>(
     //     {address[0], address[1], address[2], address[3], address[4],
     //     address[5],
     //      address[6], address[7], address[8], address[9], address[10],

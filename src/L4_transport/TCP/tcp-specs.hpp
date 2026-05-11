@@ -10,7 +10,7 @@ namespace ip_stack {
 
 class TCPEntity {
 public:
-  using address_t = cns::PortAddress;
+  using address_t = ip_stack::PortAddress;
   constexpr static cns::OsiLayer LAYER_IDX{cns::OsiLayer::TRANSPORT_IDX};
   constexpr static std::size_t MAX_PACKET_SIZE{
       65535}; // Maximum size of a TCP packet (including header and data)

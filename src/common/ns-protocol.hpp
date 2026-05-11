@@ -1,14 +1,24 @@
 #pragma once
 
 #include <cstdint>
+#include <initializer_list>
 #include <unordered_map>
 
+#include "cpp-common/containers.hpp"
+#include "cpp-common/misc.hpp"
+
+// #include "L3_network/IP/ip-specs.hpp"
 #include "common-net.hpp"
+#include "misc.hpp"
+
+namespace hlp_cont = HLP::Containers;
 
 namespace common_ns {
 namespace protocol {
 using protocol_version_t = std::uint64_t;
 using entity_id_t = std::uint64_t;
+using uuid_t = std::uint64_t;
+using uuid_generator_t = HLP::SingletonUuidGenerator<uuid_t>;
 
 constexpr protocol_version_t DEFAULT_PROTOCOL_VERSION{1};
 
@@ -64,6 +74,7 @@ protected:
 private:
 };
 
+// TO-DO : decide whether or not I keep this
 class NsHandlerBase {
 public:
   NsHandlerBase() = default;
@@ -79,10 +90,24 @@ private:
 };
 
 template <typename T>
-concept IsHandlerType = requires(T handler, entity_id_t const &entity) {
-  handler.handleEncapsulatedMsg(entity);
-  handler.handleDecapsulatedMsg(entity);
-};
+// TO-DO : specify requirements
+concept IsMsgType = hlp_cont::IsUsableAsBuffer<T>;
+
+template <typename T>
+// TO-DO : specify requirements
+concept IsDynamicSizeMsgType = hlp_cont::IsUsableAsDynamicSizeBuffer<T>;
+
+template <typename T>
+concept IsHandlerType =
+    false || requires(T handler, typename T::entity_t const &entity,
+                      typename T::msg_t const &msg) {
+      handler.handleEncapsulatedMsg(entity, msg);
+      handler.handleDecapsulatedMsg(entity, msg);
+    };
+
+// TO-DO : fix this
+static_assert(true || IsHandlerType<NsHandlerBase>,
+              "Error : NsHandlerBase doesn't satisfy IsHandlerType concept !");
 
 } // namespace protocol
 } // namespace common_ns
