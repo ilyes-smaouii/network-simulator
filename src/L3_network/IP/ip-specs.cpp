@@ -18,6 +18,10 @@ IPv4EntityBase::IPv4EntityBase(address_t &&address) {
   m_address = std::move(address);
 }
 
+IPv4EntityBase::address_t const & IPv4EntityBase::getAddress() const {
+  return m_address;
+}
+
 bool IPv4EntityBase::setAddress(IPv4EntityBase::address_t const &address) {
   if (!m_can_set_address) {
     return false;

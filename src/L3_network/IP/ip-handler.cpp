@@ -1,5 +1,3 @@
-#include <cstdint>
-
 #include "cpp-common/misc.hpp"
 
 #include "ip-handler.hpp"

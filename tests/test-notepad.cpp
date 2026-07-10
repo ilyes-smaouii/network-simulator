@@ -2,16 +2,17 @@
 #include <iostream>
 // #include <locale>
 
-#include "common/common_net.hpp"
+#include "common/common-net.hpp"
 #include "common/ns-protocol.hpp"
 #include "cpp-common/common-base.hpp"
 
 // #include "../common/common-net.hpp"
 // #include "../common/generic-layers.hpp"
-// #include "../common/misc.hpp"
 #include "L2_datalink\MAC\mac-specs.hpp"
-#include "L3_network/IP/ip-specs.hpp"
 #include "L3_network/IP/ip-handler.hpp"
+#include "L3_network/IP/ip-specs.hpp"
+#include "common/misc.hpp"
+
 // #include "../L4_transport/TCP/tcp-specs.hpp"
 
 namespace cns = common_ns;
@@ -19,7 +20,7 @@ namespace cns = common_ns;
 int main(int argc, char *argv[]) {
   std::cout << "Entering test.." << std::endl;
 
-  ip_stack::IPv4SubnetMask le_subnet_mask{0xFFF0}; // IP/24 addresses
+  ip_stack::IPv4SubnetMask le_subnet_mask{24}; // IP/24 addresses
   ip_stack::IPv4HandlerBase le_handler{};
 
   auto alice_mac = ip_stack::MacEntity();
@@ -42,8 +43,8 @@ int main(int argc, char *argv[]) {
   cns::protocol::Message le_msg_morgan{
       ip_stack::IpMsgFromString(morgan_msg_str)};
 
-  alice_ip.encapsulateMsg(le_msg_bob, bob_ip.getAddress());
-  alice_ip.encapsulateMsg(le_msg_morgan, morgan_ip.getAddress());
+  //   alice_ip.encapsulateMsg(le_msg_bob, bob_ip.getAddress());
+  //   alice_ip.encapsulateMsg(le_msg_morgan, morgan_ip.getAddress());
 
   // auto bob_msgs = le_handler.getReceivedMessages(bob_ip);
   // auto morgan_msgs = le_handler.getReceivedMessages(morgan_ip);

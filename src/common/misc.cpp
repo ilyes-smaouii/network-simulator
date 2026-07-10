@@ -1,7 +1,9 @@
 #include <bit>
+#include <cassert>
 #include <concepts>
 #include <cstdint>
 #include <cstring>
+#include <format>
 #include <initializer_list>
 #include <stdexcept>
 #include <string>
@@ -16,11 +18,22 @@ namespace ip_stack {
 
 // IPv4SubnetMask
 
-bool IPv4SubnetMask::isValid() const { return isValidSubnetMask(*this); }
+IPv4SubnetMask::IPv4SubnetMask(const prefix_length_t &prefix_length) {
+  [[unlikely]] if (prefix_length > MAX_MASK_SIZE) {
+    THROW_ERROR_MSG(std::format("Can't use prefix length greater than {} !",
+                                MAX_MASK_SIZE));
+  }
+  m_prefix_length = prefix_length;
+}
 
-IPv4SubnetMask::mask_t IPv4SubnetMask::toMask() const { return m_mask; }
+IPv4SubnetMask::mask_t IPv4SubnetMask::toMask() const {
+  [[unlikely]] if (m_prefix_length == MAX_MASK_SIZE) {
+    return ~(static_cast<mask_t>(0));
+  }
+  return static_cast<mask_t>(1) << (MAX_MASK_SIZE - m_prefix_length);
+}
 
-std::size_t IPv4SubnetMask::getLength() const { return std::popcount(m_mask); }
+std::size_t IPv4SubnetMask::getLength() const { return m_prefix_length; }
 
 // IPv4
 

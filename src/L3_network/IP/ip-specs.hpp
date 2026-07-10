@@ -1,13 +1,15 @@
 #pragma once
 
 #include "cpp-common/common-base.hpp"
-#include "cpp-common/logging.hpp"
+// #include "cpp-common/logging.hpp"
 
 // #include "../../common/common-net.hpp"
 // #include "../../L2_datalink/mac/mac-specs.hpp"
 #include "../../common/generic-layers.hpp"
 #include "../../common/misc.hpp"
 #include "../../common/ns-protocol.hpp"
+#include "common/common-net.hpp"
+
 
 #include <unordered_map>
 #include <unordered_set>
@@ -23,6 +25,7 @@ namespace ip_stack {
 class IPv4EntityBase {
 public:
   constexpr static cns::OsiLayer LAYER_IDX{cns::OsiLayer::NETWORK_IDX};
+  constexpr static cns::OsiLayer getLayerIdx() { return LAYER_IDX; }
   using address_t = ip_stack::IPv4Address;
   using msg_t = std::vector<HLP::byte_t>;
   using subnet_mask_t = IPv4SubnetMask;
@@ -64,7 +67,7 @@ protected:
 private:
 };
 
-cns::protocol::Message IpMsgFromString(std::string const& msg_str);
+cns::protocol::Message IpMsgFromString(std::string const &msg_str);
 
 static_assert(cns::IsL3EntityType<IPv4EntityBase>);
 

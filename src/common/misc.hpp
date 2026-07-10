@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <functional>
 #include <initializer_list>
+#include <limits>
 #include <string>
 
 #include "common-net.hpp"
@@ -46,33 +47,28 @@ private:
 
 class IPv4SubnetMask {
 public:
+  constexpr static std::size_t MAX_MASK_SIZE{32};
   using mask_t = std::uint32_t;
   using prefix_length_t = std::uint8_t;
+  static_assert(std::numeric_limits<prefix_length_t>::max() >= MAX_MASK_SIZE,
+                "Error : prefix_length_t size too small !");
 
   IPv4SubnetMask() = default;
   IPv4SubnetMask(const IPv4SubnetMask &) = default;
   IPv4SubnetMask(IPv4SubnetMask &&) = default;
-  IPv4SubnetMask(const mask_t &mask_bin_rep);
-  // IPv4SubnetMask(const prefix_length_t &prefix_length);
+  IPv4SubnetMask(const prefix_length_t &prefix_length);
   IPv4SubnetMask &operator=(const IPv4SubnetMask &) = default;
   IPv4SubnetMask &operator=(IPv4SubnetMask &&) = default;
 
-  static bool isValidSubnetMask(IPv4SubnetMask const &subnet_mask) {
-    mask_t const &mask = subnet_mask.m_mask;
-    return (mask & (mask + 1)) == 0;
-  }
-  bool isValid() const;
-
+  // Returns mask with trailing 0's
+  // e.g. a /24 subnet mask would yield 0xFFF0, and a /16 one 0xFF00
   mask_t toMask() const;
-  /*
-   * Returns the prefix length (number of leading 1 bits) of the subnet mask.
-   */
   std::size_t getLength() const;
 
   bool operator==(const IPv4SubnetMask &other) const = default;
 
 protected:
-  mask_t m_mask{};
+  prefix_length_t m_prefix_length{};
 
 private:
 };

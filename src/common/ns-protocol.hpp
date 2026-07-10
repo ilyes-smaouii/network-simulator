@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <initializer_list>
 #include <unordered_map>
 
 #include "cpp-common/containers.hpp"
