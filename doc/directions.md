@@ -26,4 +26,11 @@ first.
 - Create custom protocols
 - Using static methods vs. objects (probably depends on data reuse, considering memory/data is main differentiating factor between the two)
 - Figure out types of capabilities/specs : protocol specs (functional POV), class specs (e.g. thread safety), etc.
+- Associate each class in source code with a numbero/id/code
+  - This later allows me to code for the specs/capabilities using both static and dynamic approaches, I think
+- Event scheduler needs to be able to provide some guarantees on ordering
+  - most straightforward, and possibly best solution --> process events in the same order they're added in
+- Rather than keeping state in Protocol Entity classes themselves, use some sort of internal heap memory with maybe an internal map or something, and then just pass the corresponding state/pointer/address to the Protocol Entity method you're calling, so it can store relevant state data in there ? This probably works better with runtime-determined environments.
+  - implies existence of addEntity() method for Handler/Environment
+  - Requires implementation of custom memory allocation ?
 - ?

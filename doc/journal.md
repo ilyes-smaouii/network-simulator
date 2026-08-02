@@ -48,3 +48,20 @@ Maybe make the `Handler` the entity that manages/checks interfaces rather than u
 Currently reorganizing my files. \
 Created a `doc/` folder to contain the journal, potentially a roadmap, some documentation and any such documents that are not actual code and can help approach the project. \
 Created a distinct `journal.md` file for the journal and moved previous entries from `README.md` to that file. \
+
+# 2026-08-01
+Been doing some thinking on some general principles and architecture/design choices these days, and each thought just creates several new questions I don't have the answers to.
+Some thoughts/leads to expand on :
+- There should be classes/entities for each protocol. This entity should know about the corresponding protocol - say IP -, so it can process messages/data accordingly.
+  - e.g. IPv4 Entity, MAC Entity, TCP Entity, etc.
+- There should probably be an event scheduler somewhere, as that allows for much more flexibility.
+- Not quite sure yet about whether Protocol Entities should be considered stateless or stateful. Maybe allow for both, and then have sort of specs/capabilities framework - analogous to `traits` in C++ - so code can account for both ?
+  - an IP Entity class, for example, could be seen as stateful, as it can have a routing table/gateway config.
+  - on the other hand, some data could be stored/managed by the Handler/Environment, and then just be passed on to the Protocol Entity methods on every call, though that kinda seems like cheating.
+- There should be some sort of Handler/Environment objects that serve as sorts of orchestrator for messages, events, Protocol Entities, etc. Not sure whether they should be kept separate from event scheduling functionality, or if that should be part of the Handler/Environment functionality.
+- Some things to keep in mind through all this : I'm trying to aim flexibility, maintainability/extendability, as well as traceability. Protocol Entities should probably remain as small as possible, and remain constrained to protocol functionality. The Handler/Environment can then take care of logging.
+- Some thought should be put into event ordering and predictability. Say a Protocol Entity receives some data it's supposed to encode, but it needs to fragment it do so. It schedules a distinct event for each fragment, but if the scheduler doesn't guarantee to keep event order, the fragments could be processed in the wrong order. Maybe the scheduler should give some sort of its "clients" some sort of "keep order" option when they add events to the queue.
+  - Or, you know, I could just make simple event scheduler that processes all events in the same order they were added in
+- if I do make some sort of `traits`-like framework, maybe it should be mostly used by the Handler/Environment; seems like that's where the responsability for that functionality should be. At least regarding checks. The Protocol Entities should still be provide information on their respective traits. One way to do that would be to use templates, as with C++ `traits`.
+  - Small issue if I want to make it a compile-time thing --> at some point, I'd like to be able to use config files to populate Environments with Protocol Entities, which means some information will only be known at runtime. This could be handled with if or switch blocks, but I don't know, that doesn't seem ideal. Maybe there's just no other way 🤷.
+Anyway, I'll continue this later.
